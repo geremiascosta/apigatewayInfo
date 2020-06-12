@@ -1,0 +1,51 @@
+swagger: "2.0"
+info:
+  description: "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
+  version: "1.0.0"
+  title: "Swagger ProdutoStore"
+host: "application-test"
+basePath: "/v1"
+tags:
+- name: "produto"
+  description: "Everything about your Produto"
+schemes:
+- "https"
+- "http"
+paths:
+  /produto:
+    post:
+      tags:
+      - "produto"
+      summary: "Add a new produto to the store"
+      description: ""
+      operationId: "addProduto"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Produto object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: "#/definitions/Produto"
+      responses:
+        "201":
+          description: "Create"  
+        "404":
+          description: "Invalid input"  
+        "500":  
+          description: "Internal Serve error"
+definitions:
+  Produto:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      nome:
+        type: "string"
+      categoria:
+        type: "string"
+      valor:
+        type: "number"

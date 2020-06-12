@@ -1,0 +1,173 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "",
+  "Metadata": {},
+  "Parameters": {},
+  "Mappings": {},
+  "Conditions": {},
+  "Resources": {
+    "LojaApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "loja-api",
+        "Description": "API used for practice",
+        "FailOnWarnings": true
+      }
+    },
+	"ProdutoModel": {
+		"Type" : "AWS::ApiGateway::Model",
+		"Properties" : {
+            "RestApiId": {
+                "Ref": "LojaApi"
+            },
+		  "ContentType" : "application/json",
+		  "Description" : "modelo de produto",
+		  "Name" : "Produto",
+		  "Schema" : {
+				"$schema": "http://json-schema.org/draft-04/schema#",
+				  "type" : "object",
+				  "required" : [ "nome", "valor" ],
+				  "properties" : {
+					"id" : {
+					  "type" : "string"
+					},
+					"nome" : {
+					  "type" : "string"
+					},
+					"fabricante" : {
+					  "type" : "string"
+					},
+					"descricao" : {
+					  "type" : "string"
+					},
+					"categoria" : {
+					  "type" : "string"
+					},
+					"valor" : {
+					  "type" : "number"
+					}
+				}
+			}
+		}
+	},
+	"RequestValidatorProduto": {
+		"Type": "AWS::ApiGateway::RequestValidator",
+		"Properties": {
+			"Name": "validadorProduto",
+			"RestApiId": {
+				"Ref": "LojaApi"
+			},
+			"ValidateRequestBody": true,
+			"ValidateRequestParameters": true
+		}
+	},
+	"Produto": {
+        "Type": "AWS::ApiGateway::Resource",
+        "Properties": {
+            "RestApiId": {
+                "Ref": "LojaApi"
+            },
+            "ParentId": {
+                "Fn::GetAtt": [
+                    "LojaApi",
+                    "RootResourceId"
+                ]
+            },
+            "PathPart": "produto"
+        }
+    },
+	"CreateProduto": {
+        "Type": "AWS::ApiGateway::Method",
+        "Properties": {
+            "RestApiId": {
+                "Ref": "LojaApi"
+            },
+            "ResourceId": {
+				"Ref": "Produto"
+            },
+			"RequestValidatorId": {
+				"Ref": "RequestValidatorProduto"
+			},
+            "HttpMethod": "POST",
+            "AuthorizationType": "NONE",
+            "Integration": {
+                "Type": "MOCK"
+            }
+        }
+    },
+	"FindProduto": {
+        "Type": "AWS::ApiGateway::Method",
+        "Properties": {
+            "RestApiId": {
+                "Ref": "LojaApi"
+            },
+            "ResourceId": {
+				"Ref": "Produto"
+            },
+            "HttpMethod": "GET",
+            "AuthorizationType": "NONE",
+            "Integration": {
+                "Type": "MOCK"
+            }
+        }
+    },
+	"UpdateProduto": {
+        "Type": "AWS::ApiGateway::Method",
+        "Properties": {
+            "RestApiId": {
+                "Ref": "LojaApi"
+            },
+            "ResourceId": {
+				"Ref": "Produto"
+            },
+			"RequestValidatorId": {
+				"Ref": "RequestValidatorProduto"
+			},
+            "HttpMethod": "PUT",
+            "AuthorizationType": "NONE",
+            "Integration": {
+                "Type": "MOCK"
+            }
+        }
+    },
+	"DeleteProduto": {
+        "Type": "AWS::ApiGateway::Method",
+        "Properties": {
+            "RestApiId": {
+                "Ref": "LojaApi"
+            },
+            "ResourceId": {
+				"Ref": "Produto"
+            },
+            "HttpMethod": "DELETE",
+            "AuthorizationType": "NONE",
+            "Integration": {
+                "Type": "MOCK"
+            }
+        }
+    },
+	"Deployment": {
+      "DependsOn": ["LojaApi", "CreateProduto", "FindProduto", "UpdateProduto", "DeleteProduto"],
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "LojaApi"
+        }
+      }
+    },
+    "Stage": {
+      "DependsOn": ["LojaApi", "CreateProduto", "FindProduto", "UpdateProduto", "DeleteProduto"],
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "StageName": "dev",
+        "RestApiId": {
+          "Ref": "LojaApi"
+        },
+        "DeploymentId": {
+          "Ref": "Deployment"
+        }
+      }
+    }
+  },
+  "Outputs": {}
+}
